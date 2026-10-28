@@ -7,6 +7,8 @@ from django.urls import include, path
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # Usuarios: login, logout, registro y perfil (accounts/urls.py)
+    path("accounts/", include("accounts.urls")),
     # Las rutas del blog estan organizadas en posts/urls.py
     path("", include("posts.urls")),
 ]

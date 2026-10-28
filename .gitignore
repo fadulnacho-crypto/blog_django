@@ -5,3 +5,5 @@ __pycache__/
 db.sqlite3
 media/posts/*
 !media/posts/.gitkeep
+media/avatares/*
+!media/avatares/.gitkeep

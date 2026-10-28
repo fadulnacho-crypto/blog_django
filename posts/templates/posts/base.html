@@ -13,10 +13,32 @@
         <nav class="menu">
             <a href="{% url 'posts:inicio' %}">Inicio</a>
             <a href="{% url 'posts:lista_posts' %}">Posts</a>
-            <a href="{% url 'posts:crear_post' %}">Nuevo post</a>
             <a href="{% url 'posts:acerca' %}">Acerca de</a>
+
+            {% if user.is_authenticated %}
+                {# Menu para usuarios que iniciaron sesion #}
+                <a href="{% url 'posts:crear_post' %}">Crear post</a>
+                <a href="{% url 'perfil' %}" class="menu-usuario">
+                    {% if user.perfil.avatar %}
+                    <img class="avatar-mini" src="{{ user.perfil.avatar.url }}" alt="">
+                    {% endif %}
+                    Mi perfil
+                </a>
+                <form method="post" action="{% url 'logout' %}" class="form-logout">
+                    {% csrf_token %}
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            {% else %}
+                {# Menu para visitantes anonimos #}
+                <a href="{% url 'login' %}">Iniciar sesión</a>
+                <a href="{% url 'registro' %}" class="menu-destacado">Registrarse</a>
+            {% endif %}
         </nav>
     </header>
+
+    {% if user.is_authenticated %}
+    <p class="saludo">Hola, {{ user.username }}</p>
+    {% endif %}
 
     <main class="contenido">
         {% if messages %}

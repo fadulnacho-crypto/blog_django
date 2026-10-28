@@ -314,3 +314,140 @@ button.boton {
 .campo input[type="checkbox"] {
     margin: 0 4px 0 8px;
 }
+
+/* Usuarios y perfil (Preentrega 11) */
+.menu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+.menu a {
+    margin-left: 8px;
+}
+
+.menu-usuario {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.menu-destacado {
+    background-color: var(--blanco);
+    color: var(--acento) !important;
+    font-weight: 600;
+}
+
+.menu-destacado:hover {
+    background-color: #ccebe7 !important;
+}
+
+.avatar-mini {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.form-logout {
+    display: inline;
+    margin: 0 0 0 8px;
+}
+
+.form-logout button {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    color: var(--blanco);
+    font: inherit;
+    padding: 5px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.form-logout button:hover {
+    background-color: var(--acento-oscuro);
+}
+
+.saludo {
+    width: 100%;
+    max-width: 860px;
+    margin: 16px auto -24px;
+    padding: 0 20px;
+    color: var(--suave);
+}
+
+.caja-angosta {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.aviso {
+    background-color: #fff4e5;
+    color: #8a4b00;
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
+.ayuda {
+    color: var(--suave);
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+.ayuda ul {
+    margin: 4px 0 0;
+    padding-left: 20px;
+}
+
+.campo input[type="password"],
+.campo input[type="email"],
+.campo input[type="url"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    font: inherit;
+}
+
+.perfil {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+.perfil-datos {
+    flex: 1;
+}
+
+.avatar {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.avatar-vacio {
+    background-color: var(--acento);
+    color: var(--blanco);
+    font-size: 3.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 600px) {
+    .perfil {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .perfil .acciones {
+        justify-content: center;
+    }
+}

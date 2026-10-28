@@ -1,6 +1,6 @@
 # Blog Django
 
-Proyecto base de un blog web desarrollado con Django (Preentregas 7 a 10). Permite crear, ver, editar y eliminar posts con imagen desde el propio sitio.
+Proyecto base de un blog web desarrollado con Django (Preentregas 7 a 11). Permite crear, ver, editar y eliminar posts con imagen desde el propio sitio, y tiene usuarios con registro, login, logout y perfil con avatar.
 
 ## Descripción
 
@@ -22,13 +22,28 @@ blog_django/
 ├── README.md
 ├── .gitignore
 ├── media/
-│   └── posts/          # imágenes subidas (no se suben a GitHub)
+│   ├── posts/          # imágenes de los posts (no se suben a GitHub)
+│   └── avatares/       # avatares de perfil (no se suben a GitHub)
 ├── blog_project/
 │   ├── __init__.py
 │   ├── settings.py
 │   ├── urls.py
 │   ├── asgi.py
 │   └── wsgi.py
+├── accounts/           # usuarios: registro, login, logout y perfil
+│   ├── admin.py
+│   ├── forms.py
+│   ├── models.py       # modelo Perfil
+│   ├── urls.py
+│   ├── views.py
+│   └── templates/
+│       └── accounts/
+│           ├── login.html
+│           ├── registro.html
+│           ├── perfil.html
+│           ├── editar_perfil.html
+│           ├── password_change.html
+│           └── password_change_done.html
 └── posts/
     ├── __init__.py
     ├── admin.py
@@ -96,7 +111,7 @@ pip install -r requirements.txt
 
 Las dependencias son **Django** y **Pillow** (necesaria para el campo de imagen).
 
-Crear la base de datos (aplica las migraciones y carga posts de ejemplo):
+Crear la base de datos. Este comando aplica todas las migraciones (posts, imágenes y perfiles) y carga posts de ejemplo. Hay que volver a ejecutarlo cada vez que se agregan migraciones nuevas:
 
 ```bash
 python manage.py migrate
@@ -194,6 +209,82 @@ Las imágenes subidas quedan en `media/posts/`, que está en `.gitignore` (igual
 4. Al guardar, el sitio redirige al detalle, donde se ve la imagen. También aparece como miniatura en el listado.
 5. Para cambiarla, entrar a **Editar** y elegir otra imagen. Para quitarla, marcar la casilla **Eliminar** junto a la imagen actual.
 
+## Usuarios, autenticación y perfil (Preentrega 11)
+
+Todo lo relacionado con usuarios está en la app **`accounts`** (registrada en `INSTALLED_APPS` como `accounts.apps.AccountsConfig`). Usa el sistema de autenticación de Django (`django.contrib.auth`).
+
+### Rutas
+
+| Ruta | View | ¿Requiere login? |
+|---|---|---|
+| `/accounts/registro/` | `registro` (formulario propio) | No |
+| `/accounts/login/` | `LoginView` (nativa de Django) | No |
+| `/accounts/logout/` | `LogoutView` (nativa de Django) | — |
+| `/accounts/perfil/` | `perfil` | **Sí** |
+| `/accounts/perfil/editar/` | `editar_perfil` | **Sí** |
+| `/accounts/password/` | `PasswordChangeView` | **Sí** |
+
+Redirecciones configuradas en `settings.py`:
+
+```python
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "posts:lista_posts"
+LOGOUT_REDIRECT_URL = "posts:lista_posts"
+```
+
+### Registro
+
+`accounts/forms.py` define `RegistroForm`, que hereda de `UserCreationForm` y agrega email (obligatorio y único), nombre y apellido. La view `registro` guarda el usuario, **crea su perfil con `Perfil.objects.create(user=usuario)`**, inicia la sesión automáticamente y redirige a "Mi perfil".
+
+### Iniciar y cerrar sesión
+
+- **Login:** entrar a `/accounts/login/` (o al botón **Iniciar sesión** del menú) con usuario y contraseña. Si se llegó desde una página protegida, después del login vuelve a esa página (parámetro `next`).
+- **Logout:** botón **Cerrar sesión** del menú. Envía un formulario POST a `/accounts/logout/` (es lo que exige Django) y redirige al listado de posts.
+
+### Modelo Perfil
+
+En `accounts/models.py`:
+
+```python
+class Perfil(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="perfil")
+    biografia = models.TextField(blank=True)
+    link_web = models.URLField(blank=True)
+    avatar = models.ImageField(upload_to="avatares/", null=True, blank=True)
+```
+
+- La relación `OneToOneField` vincula cada usuario con **un único** perfil (`usuario.perfil`).
+- Migración: `accounts/migrations/0001_initial.py`.
+- Está registrado en el admin (`PerfilAdmin`), donde se ven usuario, sitio web y si tiene avatar.
+- Las views de perfil usan `Perfil.objects.get_or_create(user=request.user)`, así también funcionan para usuarios creados antes, por ejemplo con `createsuperuser`.
+
+### Avatares
+
+- El avatar se guarda en `media/avatares/` (`upload_to="avatares/"`) y usa la misma configuración de media del módulo anterior (`MEDIA_URL`, `MEDIA_ROOT` y las URLs de media en `blog_project/urls.py`).
+- `editar_perfil` instancia `PerfilForm(request.POST, request.FILES, instance=perfil)` para procesar la imagen, y su template usa `enctype="multipart/form-data"`.
+- El perfil muestra el avatar solo si existe (`{% if perfil.avatar %}`); si no hay, muestra un círculo con la inicial del usuario. El avatar también aparece en el menú junto a "Mi perfil".
+
+### Rutas protegidas
+
+Las views de **crear, editar y eliminar posts** tienen `@login_required`, igual que el perfil, la edición de perfil y el cambio de contraseña. Si alguien no autenticado intenta entrar escribiendo la URL (por ejemplo `/posts/crear/`, `/post/nuevo/` o `/posts/1/editar/`), Django lo redirige al login. El **listado y el detalle de posts siguen siendo públicos**.
+
+### Navegación según el usuario
+
+`base.html` usa `{% if user.is_authenticated %}`:
+
+- **Visitante anónimo:** Inicio, Posts, Acerca de, **Iniciar sesión** y **Registrarse**.
+- **Usuario con sesión:** Inicio, Posts, Acerca de, **Crear post**, **Mi perfil** y **Cerrar sesión**, más el saludo "Hola, usuario".
+
+Los botones Editar y Eliminar de los posts solo se muestran a usuarios con sesión iniciada.
+
+### Cómo probarlo
+
+1. `python manage.py migrate` y `python manage.py runserver`.
+2. Entrar a **Registrarse**, crear una cuenta: se inicia la sesión y se abre "Mi perfil".
+3. **Editar perfil**: escribir una biografía y subir un avatar.
+4. **Cerrar sesión** e intentar entrar a http://127.0.0.1:8000/posts/crear/: redirige al login.
+5. Iniciar sesión: vuelve al formulario de crear post.
+
 ## Panel de administración
 
 1. Crear un superusuario (pide nombre de usuario, email y contraseña):
@@ -204,7 +295,7 @@ Las imágenes subidas quedan en `media/posts/`, que está en `.gitignore` (igual
 
 2. Levantar el servidor con `python manage.py runserver`.
 3. Entrar a http://127.0.0.1:8000/admin/ con ese usuario.
-4. En **Posts** se pueden crear, editar y borrar publicaciones. El listado muestra título, autor, estado y fecha de creación, con filtros por estado y fecha, buscador y el estado editable desde la lista (clase `PostAdmin` en `posts/admin.py`).
+4. En **Posts** y **Perfiles** se pueden ver y administrar los datos. En **Posts** se pueden crear, editar y borrar publicaciones. El listado muestra título, autor, estado y fecha de creación, con filtros por estado y fecha, buscador y el estado editable desde la lista (clase `PostAdmin` en `posts/admin.py`).
 
 Al marcar un post como **Publicado**, aparece automáticamente en `/` y en `/posts/`.
 

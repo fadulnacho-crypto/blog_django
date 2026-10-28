@@ -1,0 +1,29 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}Editar perfil | Blog de Ignacio{% endblock %}
+
+{% block content %}
+<h1>Editar perfil</h1>
+
+<div class="tarjeta">
+    {% if perfil.avatar %}
+    <p class="meta">Avatar actual:</p>
+    <img class="avatar" src="{{ perfil.avatar.url }}" alt="Avatar de {{ user.username }}">
+    {% endif %}
+
+    <!-- enctype="multipart/form-data" es necesario para enviar el avatar -->
+    <form method="post" enctype="multipart/form-data" class="formulario">
+        {% csrf_token %}
+        <h2>Datos personales</h2>
+        {% include 'accounts/_campos.html' with form=usuario_form %}
+
+        <h2>Perfil</h2>
+        {% include 'accounts/_campos.html' with form=perfil_form %}
+
+        <div class="acciones">
+            <button type="submit" class="boton">Guardar cambios</button>
+            <a href="{% url 'perfil' %}">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

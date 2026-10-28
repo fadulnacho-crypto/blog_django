@@ -1,6 +1,11 @@
-"""Views basadas en funciones de la app posts (incluye el CRUD de Post)."""
+"""Views basadas en funciones de la app posts (incluye el CRUD de Post).
+
+Crear, editar y eliminar requieren usuario autenticado (@login_required).
+El listado y el detalle son publicos.
+"""
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import PostForm
@@ -52,6 +57,7 @@ def detalle_post(request, pk):
     return render(request, "posts/detalle_post.html", {"post": post})
 
 
+@login_required
 def crear_post(request):
     """CREATE: muestra el formulario y guarda el nuevo post con su imagen."""
     if request.method == "POST":
@@ -62,10 +68,13 @@ def crear_post(request):
             messages.success(request, "El post se creó correctamente.")
             return redirect("posts:detalle_post", pk=post.pk)
     else:
-        form = PostForm()
+        # El autor se completa con el nombre del usuario que inicio sesion
+        nombre = request.user.get_full_name() or request.user.username
+        form = PostForm(initial={"autor": nombre})
     return render(request, "posts/post_form.html", {"form": form, "accion": "Crear"})
 
 
+@login_required
 def editar_post(request, pk):
     """UPDATE: edita un post existente y permite cambiar o quitar la imagen."""
     post = get_object_or_404(Post, pk=pk)
@@ -80,6 +89,7 @@ def editar_post(request, pk):
     return render(request, "posts/post_form.html", {"form": form, "accion": "Editar", "post": post})
 
 
+@login_required
 def eliminar_post(request, pk):
     """DELETE: pide confirmacion (GET) y elimina el post (POST)."""
     post = get_object_or_404(Post, pk=pk)

@@ -5,7 +5,9 @@
 {% block content %}
 <div class="titulo-con-accion">
     <h1>Posts</h1>
+    {% if user.is_authenticated %}
     <a class="boton" href="{% url 'posts:crear_post' %}">+ Nuevo post</a>
+    {% endif %}
 </div>
 
 <nav class="filtros">
@@ -31,13 +33,15 @@
             <p>{{ post.contenido|truncatewords:30 }}</p>
             <p class="acciones">
                 <a href="{% url 'posts:detalle_post' post.pk %}">Ver</a>
+                {% if user.is_authenticated %}
                 <a href="{% url 'posts:editar_post' post.pk %}">Editar</a>
                 <a class="peligro" href="{% url 'posts:eliminar_post' post.pk %}">Eliminar</a>
+                {% endif %}
             </p>
         </div>
     </article>
     {% empty %}
-    <p class="tarjeta">No hay posts en esta sección. <a href="{% url 'posts:crear_post' %}">Crear uno</a>.</p>
+    <p class="tarjeta">No hay posts en esta sección.{% if user.is_authenticated %} <a href="{% url 'posts:crear_post' %}">Crear uno</a>.{% endif %}</p>
     {% endfor %}
 </div>
 {% endblock %}

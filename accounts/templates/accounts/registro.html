@@ -1,0 +1,21 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}Registrarse | Blog de Ignacio{% endblock %}
+
+{% block content %}
+<div class="caja-angosta">
+    <h1>Crear cuenta</h1>
+
+    <div class="tarjeta">
+        <form method="post" class="formulario">
+            {% csrf_token %}
+            {% include 'accounts/_campos.html' with form=form %}
+            <div class="acciones">
+                <button type="submit" class="boton">Registrarme</button>
+            </div>
+        </form>
+    </div>
+
+    <p>¿Ya tenés cuenta? <a href="{% url 'login' %}">Iniciá sesión</a>.</p>
+</div>
+{% endblock %}
