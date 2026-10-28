@@ -21,7 +21,8 @@
 <h2>Publicaciones recientes</h2>
 {% for post in posts %}
 <article class="tarjeta">
-    <h3>{{ post.titulo }}</h3>
+    {% if post.imagen %}<img class="miniatura" src="{{ post.imagen.url }}" alt="{{ post.titulo }}">{% endif %}
+    <h3><a href="{% url 'posts:detalle_post' post.pk %}">{{ post.titulo }}</a></h3>
     <p class="meta">Por {{ post.autor }} &middot; {{ post.fecha_creacion|date:"d/m/Y" }}</p>
     <p>{{ post.contenido|truncatewords:30 }}</p>
 </article>

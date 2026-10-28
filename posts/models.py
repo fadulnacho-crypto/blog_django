@@ -18,6 +18,7 @@ class Post(models.Model):
         choices=Estado.choices,
         default=Estado.BORRADOR,
     )
+    imagen = models.ImageField(upload_to="posts/", null=True, blank=True)
 
     class Meta:
         ordering = ["-fecha_creacion"]

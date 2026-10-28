@@ -3,20 +3,41 @@
 {% block title %}Posts | Blog de Ignacio{% endblock %}
 
 {% block content %}
-<h1>Últimos posts</h1>
+<div class="titulo-con-accion">
+    <h1>Posts</h1>
+    <a class="boton" href="{% url 'posts:crear_post' %}">+ Nuevo post</a>
+</div>
+
+<nav class="filtros">
+    {% for valor, texto in filtros.items %}
+    <a href="?estado={{ valor }}" class="{% if valor == estado_actual %}activo{% endif %}">{{ texto }}</a>
+    {% endfor %}
+</nav>
 
 <div class="lista-posts">
     {% for post in posts %}
-    <article class="tarjeta">
-        <h2>{{ post.titulo }}</h2>
-        <p class="meta">
-            Por {{ post.autor }} &middot; {{ post.fecha_creacion|date:"d/m/Y H:i" }}
-            <span class="estado">{{ post.get_estado_display }}</span>
-        </p>
-        <p>{{ post.contenido|linebreaksbr }}</p>
+    <article class="tarjeta tarjeta-post">
+        {% if post.imagen %}
+        <a href="{% url 'posts:detalle_post' post.pk %}">
+            <img class="miniatura" src="{{ post.imagen.url }}" alt="{{ post.titulo }}">
+        </a>
+        {% endif %}
+        <div>
+            <h2><a href="{% url 'posts:detalle_post' post.pk %}">{{ post.titulo }}</a></h2>
+            <p class="meta">
+                Por {{ post.autor }} &middot; {{ post.fecha_creacion|date:"d/m/Y H:i" }}
+                <span class="estado">{{ post.get_estado_display }}</span>
+            </p>
+            <p>{{ post.contenido|truncatewords:30 }}</p>
+            <p class="acciones">
+                <a href="{% url 'posts:detalle_post' post.pk %}">Ver</a>
+                <a href="{% url 'posts:editar_post' post.pk %}">Editar</a>
+                <a class="peligro" href="{% url 'posts:eliminar_post' post.pk %}">Eliminar</a>
+            </p>
+        </div>
     </article>
     {% empty %}
-    <p class="tarjeta">Todavía no hay posts publicados. Cargalos desde el panel <a href="/admin/">/admin/</a>.</p>
+    <p class="tarjeta">No hay posts en esta sección. <a href="{% url 'posts:crear_post' %}">Crear uno</a>.</p>
     {% endfor %}
 </div>
 {% endblock %}

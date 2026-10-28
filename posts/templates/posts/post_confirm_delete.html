@@ -1,0 +1,21 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}Eliminar post | Blog de Ignacio{% endblock %}
+
+{% block content %}
+<h1>Eliminar post</h1>
+
+<div class="tarjeta">
+    <p>¿Seguro que querés eliminar el post <strong>"{{ post.titulo }}"</strong>? Esta acción no se puede deshacer.</p>
+
+    {% if post.imagen %}
+    <img class="miniatura" src="{{ post.imagen.url }}" alt="{{ post.titulo }}">
+    {% endif %}
+
+    <form method="post" class="acciones">
+        {% csrf_token %}
+        <button type="submit" class="boton boton-peligro">Sí, eliminar</button>
+        <a href="{% url 'posts:detalle_post' post.pk %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

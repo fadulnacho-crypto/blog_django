@@ -1,6 +1,6 @@
 # Blog Django
 
-Proyecto base de un blog web desarrollado con Django (Preentregas 7, 8 y 9).
+Proyecto base de un blog web desarrollado con Django (Preentregas 7 a 10). Permite crear, ver, editar y eliminar posts con imagen desde el propio sitio.
 
 ## Descripción
 
@@ -21,6 +21,8 @@ blog_django/
 ├── requirements.txt
 ├── README.md
 ├── .gitignore
+├── media/
+│   └── posts/          # imágenes subidas (no se suben a GitHub)
 ├── blog_project/
 │   ├── __init__.py
 │   ├── settings.py
@@ -31,8 +33,8 @@ blog_django/
     ├── __init__.py
     ├── admin.py
     ├── apps.py
+    ├── forms.py
     ├── migrations/
-    │   └── __init__.py
     ├── models.py
     ├── tests.py
     ├── urls.py
@@ -42,6 +44,9 @@ blog_django/
     │       ├── base.html
     │       ├── inicio.html
     │       ├── lista_posts.html
+    │       ├── detalle_post.html
+    │       ├── post_form.html
+    │       ├── post_confirm_delete.html
     │       └── acerca.html
     └── static/
         └── posts/
@@ -88,6 +93,8 @@ Instalar las dependencias:
 ```bash
 pip install -r requirements.txt
 ```
+
+Las dependencias son **Django** y **Pillow** (necesaria para el campo de imagen).
 
 Crear la base de datos (aplica las migraciones y carga posts de ejemplo):
 
@@ -140,6 +147,52 @@ El método `__str__` devuelve el título, así cada post se ve por su nombre en 
 
 - **Migraciones:** `0001_initial.py` crea la tabla del modelo. `0002_posts_de_ejemplo.py` carga 5 posts de ejemplo (3 publicados, 1 borrador y 1 archivado) para que el sitio no aparezca vacío al clonar el repo, ya que `db.sqlite3` no se sube a GitHub.
 - **ORM:** las views `inicio` y `lista_posts` consultan `Post.objects.filter(estado="publicado").order_by("-fecha_creacion")` y envían los posts al template por contexto. Los templates los recorren con `{% for post in posts %}`. Solo se muestran los posts **publicados**.
+
+## CRUD de posts con imágenes (Preentrega 10)
+
+### Operaciones disponibles
+
+| Operación | URL | View | Template |
+|---|---|---|---|
+| Listar (Read) | `/posts/` | `lista_posts` | `lista_posts.html` |
+| Ver detalle (Read) | `/posts/<id>/` | `detalle_post` | `detalle_post.html` |
+| Crear (Create) | `/posts/crear/` | `crear_post` | `post_form.html` |
+| Editar (Update) | `/posts/<id>/editar/` | `editar_post` | `post_form.html` |
+| Eliminar (Delete) | `/posts/<id>/eliminar/` | `eliminar_post` | `post_confirm_delete.html` |
+
+- El listado muestra los posts **publicados** por defecto y tiene filtros para ver borradores, archivados o todos (`?estado=borrador`, `?estado=archivado`, `?estado=todos`).
+- Eliminar pide **confirmación**: la página de confirmación se muestra con GET y el post solo se borra al enviar el formulario (POST). También se borra el archivo de su imagen.
+- Después de crear o editar, el sitio redirige al detalle del post y muestra un mensaje de confirmación.
+
+### Formulario
+
+`posts/forms.py` define `PostForm`, un `forms.ModelForm` basado en `Post` con los campos `titulo`, `contenido`, `autor`, `estado` e `imagen`. Las views de crear y editar lo instancian con `PostForm(request.POST, request.FILES)` para recibir también la imagen. El `<form>` de `post_form.html` usa `enctype="multipart/form-data"`, necesario para enviar archivos.
+
+### Manejo de imágenes
+
+1. **Campo en el modelo:** `imagen = models.ImageField(upload_to="posts/", null=True, blank=True)`. Es opcional y las imágenes se guardan en `media/posts/`. Migración: `0003_post_imagen.py`.
+2. **Dependencia nueva:** `Pillow` (`pip install Pillow`), agregada a `requirements.txt`. Django la necesita para trabajar con `ImageField`.
+3. **Configuración en `settings.py`:**
+   ```python
+   MEDIA_URL = "/media/"
+   MEDIA_ROOT = BASE_DIR / "media"
+   ```
+4. **Servir media en desarrollo** (`blog_project/urls.py`):
+   ```python
+   if settings.DEBUG:
+       urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+   ```
+5. **En los templates** la imagen se muestra con `{{ post.imagen.url }}` solo si existe (`{% if post.imagen %}`); si un post no tiene imagen, el detalle muestra "Este post no tiene imagen." sin romperse.
+
+Las imágenes subidas quedan en `media/posts/`, que está en `.gitignore` (igual que `db.sqlite3`).
+
+### Cómo probar la carga de imágenes
+
+1. Ejecutar `python manage.py migrate` y `python manage.py runserver`.
+2. Entrar a http://127.0.0.1:8000/posts/crear/ (o al botón **Nuevo post**).
+3. Completar el formulario, elegir una imagen en **Imagen (opcional)** y poner el estado en **Publicado**.
+4. Al guardar, el sitio redirige al detalle, donde se ve la imagen. También aparece como miniatura en el listado.
+5. Para cambiarla, entrar a **Editar** y elegir otra imagen. Para quitarla, marcar la casilla **Eliminar** junto a la imagen actual.
 
 ## Panel de administración
 
