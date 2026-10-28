@@ -2,34 +2,25 @@
 
 from django.shortcuts import render
 
-# Datos de ejemplo (todavia sin base de datos ni modelos)
-POSTS_EJEMPLO = [
-    {
-        "titulo": "Introduccion a Python",
-        "resumen": "Python es un lenguaje simple y poderoso para empezar a programar.",
-        "tags": ["python", "programacion"],
-    },
-    {
-        "titulo": "Primeros pasos con Django",
-        "resumen": "Como pasar de un blog por consola a un sitio web real.",
-        "tags": ["django", "web"],
-    },
-    {
-        "titulo": "Consejos para aprender a programar",
-        "resumen": "Practicar todos los dias es la clave.",
-        "tags": ["consejos"],
-    },
-]
+from .models import Post
 
 
 def inicio(request):
-    """Pagina de inicio del blog."""
-    return render(request, "posts/inicio.html")
+    """Pagina de inicio: muestra los ultimos 3 posts publicados."""
+    ultimos_posts = Post.objects.filter(estado="publicado").order_by("-fecha_creacion")[:3]
+    context = {
+        "posts": ultimos_posts,
+    }
+    return render(request, "posts/inicio.html", context)
 
 
 def lista_posts(request):
-    """Listado de posts de ejemplo."""
-    return render(request, "posts/lista_posts.html", {"posts": POSTS_EJEMPLO})
+    """Listado de todos los posts publicados, consultados con el ORM."""
+    posts = Post.objects.filter(estado="publicado").order_by("-fecha_creacion")
+    context = {
+        "posts": posts,
+    }
+    return render(request, "posts/lista_posts.html", context)
 
 
 def acerca(request):

@@ -142,3 +142,25 @@ h2 {
         margin-right: 8px;
     }
 }
+
+/* Datos de cada post (Preentrega 9) */
+h3 {
+    font-size: 1.15rem;
+    margin-top: 0;
+}
+
+.meta {
+    color: var(--suave);
+    font-size: 0.9rem;
+    margin-top: -6px;
+}
+
+.estado {
+    display: inline-block;
+    margin-left: 8px;
+    background-color: #ccebe7;
+    color: var(--acento-oscuro);
+    font-size: 0.8rem;
+    padding: 1px 10px;
+    border-radius: 999px;
+}

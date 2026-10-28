@@ -9,13 +9,14 @@
     {% for post in posts %}
     <article class="tarjeta">
         <h2>{{ post.titulo }}</h2>
-        <p>{{ post.resumen }}</p>
-        <p class="tags">
-            {% for tag in post.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+        <p class="meta">
+            Por {{ post.autor }} &middot; {{ post.fecha_creacion|date:"d/m/Y H:i" }}
+            <span class="estado">{{ post.get_estado_display }}</span>
         </p>
+        <p>{{ post.contenido|linebreaksbr }}</p>
     </article>
     {% empty %}
-    <p>Todavía no hay posts.</p>
+    <p class="tarjeta">Todavía no hay posts publicados. Cargalos desde el panel <a href="/admin/">/admin/</a>.</p>
     {% endfor %}
 </div>
 {% endblock %}
