@@ -1,0 +1,20 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}Inicio | Blog de Ignacio{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Bienvenido al Blog de Ignacio</h1>
+    <p class="bajada">Un espacio para compartir lo que voy aprendiendo sobre Python, Django y desarrollo web.</p>
+    <a class="boton" href="{% url 'posts:lista_posts' %}">Ver los posts</a>
+</section>
+
+<section class="tarjeta">
+    <h2>Sobre el proyecto</h2>
+    <p>
+        Este blog empezó como un programa por consola en Python y ahora se está
+        convirtiendo en un sitio web real con Django. En esta etapa ya funciona el
+        flujo completo: <strong>ruta &rarr; vista &rarr; template &rarr; archivos estáticos</strong>.
+    </p>
+</section>
+{% endblock %}

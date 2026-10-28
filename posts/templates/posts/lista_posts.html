@@ -1,0 +1,21 @@
+{% extends 'posts/base.html' %}
+
+{% block title %}Posts | Blog de Ignacio{% endblock %}
+
+{% block content %}
+<h1>Últimos posts</h1>
+
+<div class="lista-posts">
+    {% for post in posts %}
+    <article class="tarjeta">
+        <h2>{{ post.titulo }}</h2>
+        <p>{{ post.resumen }}</p>
+        <p class="tags">
+            {% for tag in post.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+        </p>
+    </article>
+    {% empty %}
+    <p>Todavía no hay posts.</p>
+    {% endfor %}
+</div>
+{% endblock %}

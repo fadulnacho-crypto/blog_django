@@ -1,6 +1,6 @@
 # Blog Django
 
-Proyecto base de un blog web desarrollado con Django (Preentrega 7).
+Proyecto base de un blog web desarrollado con Django (Preentregas 7 y 8).
 
 ## Descripción
 
@@ -35,7 +35,18 @@ blog_django/
     │   └── __init__.py
     ├── models.py
     ├── tests.py
-    └── views.py
+    ├── urls.py
+    ├── views.py
+    ├── templates/
+    │   └── posts/
+    │       ├── base.html
+    │       ├── inicio.html
+    │       ├── lista_posts.html
+    │       └── acerca.html
+    └── static/
+        └── posts/
+            └── css/
+                └── estilos.css
 ```
 
 ## Instalación
@@ -90,7 +101,24 @@ Para detener el servidor: `Ctrl + C`.
 
 ## Aplicaciones
 
-- **posts**: aplicación inicial para manejar las publicaciones del blog.
+- **posts**: aplicación principal para manejar las publicaciones del blog.
+
+## Páginas del sitio (Preentrega 8)
+
+El sitio implementa el flujo completo de Django: **ruta → vista → template → archivos estáticos**.
+
+| URL | View | Template |
+|---|---|---|
+| `/` | `inicio` | `posts/inicio.html` |
+| `/posts/` | `lista_posts` | `posts/lista_posts.html` |
+| `/acerca/` | `acerca` | `posts/acerca.html` |
+
+- **Rutas:** definidas en `posts/urls.py` y conectadas al proyecto con `include()` en `blog_project/urls.py`.
+- **Views:** funciones en `posts/views.py` que devuelven cada página con `render()`.
+- **Templates:** en `posts/templates/posts/`. `base.html` tiene la estructura HTML5, `{% load static %}`, el menú de navegación y el bloque `{% block content %}`. Las demás páginas lo extienden con `{% extends 'posts/base.html' %}`.
+- **Estáticos:** `posts/static/posts/css/estilos.css`, vinculado en `base.html` con `{% static 'posts/css/estilos.css' %}`.
+
+Por ahora los posts del listado son datos de ejemplo definidos en `views.py`; más adelante se van a cargar desde la base de datos con modelos.
 
 ## Autor
 

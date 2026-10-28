@@ -1,0 +1,144 @@
+/* Estilos del Blog de Ignacio */
+
+:root {
+    --fondo: #f6f4ef;
+    --texto: #1f2933;
+    --suave: #5f6b76;
+    --acento: #0f766e;
+    --acento-oscuro: #115e59;
+    --blanco: #ffffff;
+    --borde: #e3ded3;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--fondo);
+    color: var(--texto);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Encabezado y menu de navegacion */
+.encabezado {
+    background-color: var(--acento);
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.logo {
+    color: var(--blanco);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.menu a {
+    color: var(--blanco);
+    text-decoration: none;
+    margin-left: 20px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.menu a:hover {
+    background-color: var(--acento-oscuro);
+}
+
+/* Contenido */
+.contenido {
+    flex: 1;
+    width: 100%;
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    font-size: 2.2rem;
+    margin-top: 0;
+    color: var(--acento-oscuro);
+}
+
+h2 {
+    font-size: 1.3rem;
+    margin-top: 0;
+}
+
+.hero {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.bajada {
+    font-size: 1.15rem;
+    color: var(--suave);
+}
+
+.boton {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 22px;
+    background-color: var(--acento);
+    color: var(--blanco);
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.boton:hover {
+    background-color: var(--acento-oscuro);
+}
+
+.tarjeta {
+    background-color: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.tags {
+    margin-bottom: 0;
+}
+
+.tag {
+    display: inline-block;
+    background-color: #ccebe7;
+    color: var(--acento-oscuro);
+    font-size: 0.85rem;
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-right: 6px;
+}
+
+/* Pie de pagina */
+.pie {
+    text-align: center;
+    padding: 20px;
+    color: var(--suave);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--borde);
+}
+
+@media (max-width: 600px) {
+    .encabezado {
+        padding: 16px;
+    }
+
+    .menu a {
+        margin-left: 0;
+        margin-right: 8px;
+    }
+}
